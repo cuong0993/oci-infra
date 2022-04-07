@@ -1,0 +1,25 @@
+name: Provision
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 * * * *
+jobs:
+  provision-a1-flex:
+    name: Provision VM.Standard.A1.Flex
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - env:
+          PRIVATE_KEY_PEM: ${{ secrets.PRIVATE_KEY_PEM }}
+        name: Add config files
+        run: echo "$PRIVATE_KEY_PEM" > private_key.pem
+      - name: Terraform Init
+        run: terraform init -backend-config="address=https://objectstorage.ap-singapore-1.oraclecloud.com/p/FD58RMnOqCAS68pqhFepGHKVLUMWQanan99Cs0oj3AOMJmDS8ibClvKwRP3xyv--/n/axyyz3fsrayr/b/terraform-state/o/terraform.tfstate"
+          --upgrade -reconfigure
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false --var-file=a1-flex.tfvars
