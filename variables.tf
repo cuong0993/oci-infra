@@ -94,7 +94,7 @@ variable "security_list_ingress_security_rules_destination" {
 # machine configs
 variable "number_of_instances" {
   type    = number
-  default = 2
+  default = 4
 }
 variable "ssh_key_path" {
   type    = string
